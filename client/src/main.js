@@ -3,12 +3,23 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import Vuetify from 'vuetify'
+import {sync} from 'vuex-router-sync'
+import store from '@/store/store'
+import 'vuetify/dist/vuetify.min.css'
+import Panel from '@/components/Globals/Panel'
 
 Vue.config.productionTip = false
+
+Vue.use(Vuetify)
+Vue.component('panel', Panel)
+
+sync(store, router)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   template: '<App/>',
   components: { App }

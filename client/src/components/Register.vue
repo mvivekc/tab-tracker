@@ -1,12 +1,23 @@
 <template>
-  <div>
-    <h1>Register </h1>
-    <input type="email" name="email" v-model="email" placeholder="emial">
-    <br>
-    <input type="password"  v-model="password" name="password" placeholder="password">
-    <br>
-    <button @click="register"> Register</button>
-  </div>
+  <v-layout column>
+    <v-flex xs6 offset-xs3>
+      <panel title='Register'>
+        <v-text-field
+          label="Email"
+          v-model="email"
+        ></v-text-field>
+        <br>
+        <v-text-field
+          label="Password"
+          type="password"
+          v-model="password"
+        ></v-text-field>
+        <br>
+        <div v-html="error" class="viv-error"/>
+        <v-btn class="cyan" dark @click="register"> Register</v-btn>
+      </panel>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -15,16 +26,23 @@ export default {
   data () {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: null
     }
   },
   methods: {
     async register () {
-      const response = await AuthenticationService.register({
-        email: this.email,
-        password: this.password
-      })
-      console.log(response.data)
+      try {
+        const response = await AuthenticationService.register({
+          email: this.email,
+          password: this.password
+        })
+        this.$store.dispatch('setToken', response.token)
+        this.$store.dispatch('setUser', response.user)
+        this.$router.push({name: 'songs'})
+      } catch (error) {
+        this.error = error.response.data.error
+      }
     }
   }
 }
@@ -32,4 +50,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.error {
+  color: red;
+}
 </style>
